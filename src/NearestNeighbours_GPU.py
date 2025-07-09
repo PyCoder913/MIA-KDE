@@ -77,7 +77,6 @@ class NearestNeighbourDistances:
         """Encode categorical columns and normalize numeric columns if required."""
 
         # Label encode categorical columns
-        #cat_cols = self.real_df.columns[cp.asnumpy(self.cat_cols)]
         cat_cols = self.real_df.select_dtypes(include=['object', 'category']).columns
 
         for col in cat_cols:
