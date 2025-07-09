@@ -1,3 +1,10 @@
+"""
+Author: Rajdeep Pathak
+Date: July 9, 2025
+If you use this implementation, we request you to kindly cite our paper:
+"""
+
+
 from tqdm import tqdm
 import cudf
 import cupy as cp
