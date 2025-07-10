@@ -1,6 +1,7 @@
 """
 Author: Rajdeep Pathak
 Date: July 9, 2025
+Please set up a proper environment before using this class. It was tested with the RAPIDS 24.12 suite, and requires CuPy, CuDF, Dask, and dask_cudf.
 If you use this implementation, we request you to kindly cite our paper:
 """
 
