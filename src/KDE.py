@@ -8,8 +8,6 @@ import cupy as cp
 import numpy as np
 from math import sqrt, pi
 import gc
-import tensorflow as tf
-
 
 class KDE_GPU:
     """
@@ -106,87 +104,3 @@ class KDE_GPU:
         cp.get_default_pinned_memory_pool().free_all_blocks()
         
         return np.concatenate(densities)
-
-class KDE_TPU:
-    """
-    Kernel Density Estimation using TensorFlow for TPU.
-    """
-
-    def __init__(self, bandwidth=None, rule=None, kernel='gaussian'):
-        """
-        bandwidth: float or None.
-        rule: None, 'scott', 'silverman'
-        kernel: 'gaussian', 'tophat', etc.
-        """
-        self.bandwidth = bandwidth
-        self.rule = rule
-        self.kernel = kernel
-        self.data = None
-
-    def fit(self, data):
-        """Fit the KDE to data. Data must be a NumPy array or Tensor."""
-        self.data = tf.convert_to_tensor(data, dtype=tf.float32)
-        n = tf.shape(self.data)[0]
-        d = tf.shape(self.data)[-1] if len(self.data.shape) > 1 else 1
-
-        if self.bandwidth is None and self.rule is not None:
-            n = tf.cast(n, tf.float32)
-            d = tf.cast(d, tf.float32)
-            if self.rule == 'scott':
-                self.bandwidth = n ** (-1.0 / (d + 4.0))
-            elif self.rule == 'silverman':
-                self.bandwidth = (n * (d + 2.0) / 4.0) ** (-1.0 / (d + 4.0))
-            else:
-                raise ValueError("Unknown rule")
-
-    def _kernel_func(self, x):
-        abs_x = tf.abs(x)
-        if self.kernel == 'gaussian':
-            return (1.0 / sqrt(2.0 * pi)) * tf.exp(-0.5 * x ** 2)
-        elif self.kernel == 'tophat':
-            return 0.5 * tf.cast(abs_x <= 1.0, tf.float32)
-        elif self.kernel == 'epanechnikov':
-            return 0.75 * (1 - x ** 2) * tf.cast(abs_x <= 1.0, tf.float32)
-        elif self.kernel == 'exponential':
-            return 0.5 * tf.exp(-abs_x)
-        elif self.kernel == 'linear':
-            return (1 - abs_x) * tf.cast(abs_x <= 1.0, tf.float32)
-        elif self.kernel == 'cosine':
-            return (pi / 4.0) * tf.cos((pi / 2.0) * x) * tf.cast(abs_x <= 1.0, tf.float32)
-        else:
-            raise ValueError(f"Unknown kernel: {self.kernel}")
-
-    @tf.function
-    def evaluate_batch(self, batch_points):
-        """
-        Evaluate a single batch. Used internally by `evaluate`.
-        """
-        bw = tf.cast(self.bandwidth, tf.float32)
-        n = tf.cast(tf.shape(self.data)[0], tf.float32)
-
-        if len(self.data.shape) == 1:
-            diffs = (tf.expand_dims(batch_points, 1) - tf.expand_dims(self.data, 0)) / bw
-        else:
-            diffs = (tf.expand_dims(batch_points, 1) - tf.expand_dims(self.data, 0)) / bw
-            diffs = tf.norm(diffs, axis=-1)
-
-        kernels = self._kernel_func(diffs)
-        density = tf.reduce_sum(kernels, axis=1) / (n * bw)
-        return density
-
-    def evaluate(self, points, batch_size=1000):
-        """
-        Evaluate densities for all points in batches.
-        """
-        points = tf.convert_to_tensor(points, dtype=tf.float32)
-        results = []
-
-        for start in range(0, points.shape[0], batch_size):
-            end = start + batch_size
-            batch_points = points[start:end]
-            batch_density = self.evaluate_batch(batch_points)
-            results.append(batch_density)
-
-        densities = tf.concat(results, axis=0)
-        return densities.numpy()
-
