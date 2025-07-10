@@ -183,9 +183,6 @@ class TrueDistributionAttack:
         
         """
         X_test_eval = self.X_test.copy()
-        if self.transformation:
-            # Transform the test distances using the same transformation used before fitting
-            X_test_eval = self._transform(X_test_eval, self.transformation)
             
         if self.device == 'cpu':
             def compute_density(kde, points):
