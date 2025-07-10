@@ -13,13 +13,13 @@ class TrueDistributionAttack:
 
         Parameters
         ----------
-        real_distances (list or np.array): Array of member (real training) distances.
-        unseen_distances (list or np.array): Array of non-member (unseen) distances.
-        partition_param (float): Fraction of real records to keep for the attack dataset (default = 1).
-        split_param (float): Proportion of attack dataset to allocate to the test split (default = 0.3).
-        equal (bool): If True, make sure to keep the same number of members and non-members in the test set (may not respect split_param test size)
-        random_state (int): Random state for reproducibility.
-        device: 'cpu' or 'gpu'
+            real_distances (list or np.array): Array of member (real training) distances.
+            unseen_distances (list or np.array): Array of non-member (unseen) distances.
+            partition_param (float): Fraction of real records to keep for the attack dataset (default = 1).
+            split_param (float): Proportion of attack dataset to allocate to the test split (default = 0.3).
+            equal (bool): If True, make sure to keep the same number of members and non-members in the test set (may not respect split_param test size)
+            random_state (int): Random state for reproducibility.
+            device: 'cpu' or 'gpu'
         """
         self.partition_param = partition_param
         self.split_param = split_param
@@ -47,8 +47,10 @@ class TrueDistributionAttack:
         # Placeholder for fitted KDEs
         self.kde_member = None
         self.kde_nonmember = None
-        self.membership_labels_ = None
-        self.membership_probabilities_ = None
+        
+        self.true_membership_labels_ = None
+        self.predicted_membership_labels = None
+        self.membership_probas_ = None
 
     def _split_data(self, equal):
         """Split randomly into train/test sets.
@@ -175,8 +177,9 @@ class TrueDistributionAttack:
 
         Attributes
         ----------
-            membership_labels_: Membership predictions on the test set.
-            membership_probs_: Membership probabilities.
+            true_membership_labels_: True membership labels in the test set.
+            predicted_membership_labels_: Predicted membership labels for the test set.
+            membership_probas_: Predicted membership probabilities for the test set.
         
         """
         X_test_eval = self.X_test.copy()
@@ -216,8 +219,9 @@ class TrueDistributionAttack:
 
         acc = accuracy_score(self.y_test, self.predictions)
         f1 = f1_score(self.y_test, self.predictions)
-        self.membership_labels_ = np.asarray(self.predictions)
-        self.membership_probs_ = np.asarray(self.probs_member)
+        self.predicted_membership_labels_ = np.asarray(self.predictions)
+        self.true_membership_labels_ = np.asarray(self.y_test)
+        self.membership_probas_ = np.asarray(self.probs_member)
 
         return acc, f1
       
@@ -228,14 +232,14 @@ class RealisticAttack:
 
         Parameters
         ----------
-        real_distances (list or np.array): Array of member (real training) distances.
-        unseen_distances (list or np.array): Array of non-member (unseen) distances.
-        partition_param (float): Fraction of real records to keep for the attack dataset (default = 1).
-        split_param (float): Proportion of attack dataset to allocate to the test split (default = 0.3).
-        equal (bool): If True, make sure to keep the same number of members and non-members in the test set (may not respect split_param test size).
-        random_state (int): Random state for reproducibility.
-        device: 'cpu' or 'gpu'.
-        threshold_percentile (float): Percentile distance threshold to consider for deciding supposed members and non-members (default = 50).
+            real_distances (list or np.array): Array of member (real training) distances.
+            unseen_distances (list or np.array): Array of non-member (unseen) distances.
+            partition_param (float): Fraction of real records to keep for the attack dataset (default = 1).
+            split_param (float): Proportion of attack dataset to allocate to the test split (default = 0.3).
+            equal (bool): If True, make sure to keep the same number of members and non-members in the test set (may not respect split_param test size).
+            random_state (int): Random state for reproducibility.
+            device: 'cpu' or 'gpu'.
+            threshold_percentile (float): Percentile distance threshold to consider for deciding supposed members and non-members (default = 50).
         """
         self.partition_param = partition_param
         self.split_param = split_param
@@ -264,8 +268,10 @@ class RealisticAttack:
         # Placeholder for fitted KDEs
         self.kde_member = None
         self.kde_nonmember = None
-        self.membership_labels_ = None
-        self.membership_probabilities_ = None
+        
+        self.true_membership_labels_ = None
+        self.predicted_membership_labels_ = None
+        self.membership_probas_ = None
 
     def _split_data(self, equal):
         """Split randomly into train/test sets. The test set is not touched. The supposed members and supposed non-members are formed
@@ -400,8 +406,9 @@ class RealisticAttack:
 
         Attributes
         ----------
-            membership_labels_: Membership predictions on the test set.
-            membership_probs_: Membership probabilities.
+            true_membership_labels_: True membership labels in the test set.
+            predicted_membership_labels_: Predicted membership labels for the test set.
+            membership_probas_: Predicted membership probabilities for the test set.
         
         """
         X_test_eval = self.X_test.copy()
@@ -438,7 +445,8 @@ class RealisticAttack:
 
         acc = accuracy_score(self.y_test, self.predictions)
         f1 = f1_score(self.y_test, self.predictions)
-        self.membership_labels_ = np.asarray(self.predictions)
-        self.membership_probs_ = np.asarray(self.probs_member)
+        self.predicted_membership_labels_ = np.asarray(self.predictions)
+        self.true_membership_labels_ = np.asarray(self.y_test)
+        self.membership_probas_ = np.asarray(self.probs_member)
 
         return acc, f1
