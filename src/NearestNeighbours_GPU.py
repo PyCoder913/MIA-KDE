@@ -83,6 +83,10 @@ class NearestNeighbourDistances:
     def _preprocess_data(self):
         """Encode categorical columns and normalize numeric columns if required."""
 
+        # Type-casting the columns of both datasets to the same dtypes to avoid cudf concat error
+        dtype_dict = self.real_df.dtypes.to_dict()
+        self.synthetic_df = self.synthetic_df.astype(dtype_dict)
+
         # Label encode categorical columns
         cat_cols = self.real_df.select_dtypes(include=['object', 'category']).columns
 
