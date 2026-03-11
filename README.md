@@ -2,7 +2,7 @@
 
 [![Paper](https://img.shields.io/badge/Paper-PDF-red.svg)](#) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[cite_start]This repository contains the code and datasets for the paper **"Quantifying Membership Disclosure Risk for Tabular Synthetic Data Using Kernel Density Estimators"**. 
+This repository contains the code and datasets for the paper **"Quantifying Membership Disclosure Risk for Tabular Synthetic Data Using Kernel Density Estimators"**. 
 
 ## Overview
 The use of synthetic data has become increasingly popular as a privacy-preserving alternative to sharing real datasets, especially in sensitive domains such as healthcare, finance, and demography. [cite_start]However, the privacy assurances of synthetic data are not absolute, and remain susceptible to membership inference attacks (MIAs), where adversaries aim to determine whether a specific individual was present in the dataset used to train the generator. In this work, we propose a practical and effective method to quantify membership disclosure risk in tabular synthetic datasets using Kernel Density Estimators (KDEs). Our KDE-based approach models the distribution of nearest-neighbour distances between synthetic data and the training records, allowing probabilistic inference of membership and enabling robust evaluation via ROC curves.
