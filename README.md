@@ -1,6 +1,6 @@
 # Quantifying Membership Disclosure Risk for Tabular Synthetic Data Using Kernel Density Estimators
 
-[![Paper](https://img.shields.io/badge/Paper-PDF-red.svg)](#) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Paper](https://img.shields.io/badge/arXiv-Preprint-b31b1b.svg)](https://arxiv.org/abs/2603.10937) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This repository contains the code and datasets for the paper **"Quantifying Membership Disclosure Risk for Tabular Synthetic Data Using Kernel Density Estimators"**. 
 
