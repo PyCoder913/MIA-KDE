@@ -34,5 +34,6 @@ If you find this code or research useful, please consider citing our paper:
 @article{pathak2026quantifying,
   title={Quantifying Membership Disclosure Risk for Tabular Synthetic Data Using Kernel Density Estimators},
   author={Pathak, Rajdeep and Jana, Sayantee},
+  journal={arXiv preprint arXiv:2603.10937}
   year={2026}
 }
